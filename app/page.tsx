@@ -1,10 +1,13 @@
 "use client"
 
 import { useRouter } from "next/navigation";
+import { loginUser } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
+import Cookies from "js-cookie";
 
 export default function Home() {
   const router = useRouter();
-
+  
   const handleLogin = () => {
     router.push('/login');
   }

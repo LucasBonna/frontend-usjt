@@ -12,8 +12,22 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
+
 
 export default function LoginForm() {
+    const router = useRouter();
+
+    const loginUser = async ({ email, password }: { email: string; password: string }) => {
+      try {
+        const response = await api.post('/login', { email, password });
+        return response.data.accessToken;
+      } catch (error) {
+        throw new Error('Erro ao fazer login');
+      }
+    };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card className="mx-auto max-w-sm">
