@@ -11,7 +11,6 @@ interface Member {
 export default function CreateTeams() {
     const router = useRouter();
     const [teamName, setTeamName] = useState<string>('');
-    const [projectId, setProjectId] = useState<string>('');
     const [members, setMembers] = useState<Member[]>([{ id: '', name: '' }]);
 
     useEffect(() => {
@@ -39,7 +38,7 @@ export default function CreateTeams() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log({ teamName, projectId, members });
+        console.log({ teamName, members });
     };
 
     return (
@@ -55,17 +54,6 @@ export default function CreateTeams() {
                             id="teamName"
                             value={teamName}
                             onChange={(e) => setTeamName(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 mb-2" htmlFor="projectId">Project Id</label>
-                        <input
-                            className="w-full px-3 py-2 border rounded"
-                            type="text"
-                            id="projectId"
-                            value={projectId}
-                            onChange={(e) => setProjectId(e.target.value)}
                             required
                         />
                     </div>
