@@ -15,6 +15,18 @@ interface User {
     __v: number;
 }
 
+interface Team {
+    _id: string;
+    name: string;
+    members: {
+        userId: string;
+        username: string;
+        _id: string;
+    }[];
+    adminId: string;
+    __v: number;
+}
+
 export default function CreateTasks() {
     const router = useRouter();
     const [formData, setFormData] = useState({
@@ -26,6 +38,7 @@ export default function CreateTasks() {
     });
     const [users, setUsers] = useState<User[]>([]);
     const [selectedMembers, setSelectedMembers] = useState<{ userId: string, username: string }[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -46,7 +59,26 @@ export default function CreateTasks() {
             }
         };
 
+        const fetchTeams = async () => {
+            try {
+                const token = Cookies.get('token');
+                if (token) {
+                    const response = await api.get('/api/v1/teams/all', {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    setTeams(response.data.teams);
+                } else {
+                    router.push('/login');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar times:', error);
+            }
+        };
+
         fetchUsers();
+        fetchTeams();
     }, [router]);
 
     const handleChange = (e: any) => {
@@ -178,15 +210,19 @@ export default function CreateTasks() {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="teamId" className="block text-gray-700 font-semibold mb-2">ID do Time</label>
-                        <input
-                            type="text"
+                        <label htmlFor="teamId" className="block text-gray-700 font-semibold mb-2">Time</label>
+                        <select
                             id="teamId"
                             name="teamId"
                             value={formData.teamId}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        >
+                            <option value="">Selecione um time</option>
+                            {teams.map((team) => (
+                                <option key={team._id} value={team._id}>{team.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <div className="mb-4">
                         <label htmlFor="status" className="block text-gray-700 font-semibold mb-2">Status</label>

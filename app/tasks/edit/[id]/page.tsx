@@ -35,6 +35,7 @@ export default function EditTask() {
 
   useEffect(() => {
     const token = Cookies.get('token');
+    console.log('Token:', token); // Adicionar log do token
     if (!token) {
       router.push('/login');
     }
@@ -85,7 +86,7 @@ export default function EditTask() {
 
   const handleStatusChange = async (newStatus: string) => {
     try {
-      await api.put(
+      const response = await api.put(
         `/api/v1/tasks/update-status/${task?._id}`, // Usar o ID da tarefa atual
         { status: newStatus },
         {
@@ -94,7 +95,8 @@ export default function EditTask() {
           },
         }
       );
-  
+      console.log('Resposta da API:', response.data); // Adicionar log da resposta da API
+
       // Crie um novo objeto updatedTask com todas as propriedades obrigatórias
       const updatedTask: Task = {
         _id: task?._id || '', // Use o valor existente em task ou uma string vazia
@@ -106,7 +108,7 @@ export default function EditTask() {
         status: newStatus, // Use o novo status
         __v: task?.__v || 0, // Use o valor existente em task ou 0
       };
-  
+
       setTask(updatedTask);
     } catch (error) {
       console.error('Erro ao atualizar o status da tarefa:', error);
@@ -187,7 +189,10 @@ export default function EditTask() {
         <select
           id="status"
           value={task.status}
-          onChange={(e) => handleStatusChange(e.target.value)}
+          onChange={(e) => {
+            console.log('handleStatusChange chamada'); // Adicionar log para verificar se a função é chamada
+            handleStatusChange(e.target.value);
+          }}
         >
           <option value="Not Started">Não Iniciada</option>
           <option value="In Progress">Em Progresso</option>

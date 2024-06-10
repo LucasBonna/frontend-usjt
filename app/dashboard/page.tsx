@@ -179,6 +179,24 @@ export default function Dashboard() {
     console.log("Tarefas atualizadas:", updatedTasks);
   };
 
+  const handleDeleteTask = async (taskId: string) => {
+    const token = Cookies.get("token");
+    if (token) {
+      try {
+        await api.delete(`/api/v1/tasks/delete/${taskId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUpdatedTasks(updatedTasks.filter((task) => task._id !== taskId));
+      } catch (error) {
+        console.error("Erro ao excluir tarefa:", error);
+      }
+    } else {
+      router.push("/login");
+    }
+  };
+
   if (isLoading) return <div>Carregando...</div>;
   if (error) return null;
 
@@ -238,9 +256,17 @@ export default function Dashboard() {
                           </button>
                         )}
                       </div>
-                      <Link href={`/tasks/edit/${task._id}`}>
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Editar</button>
-                      </Link>
+                      <div className="flex justify-between mt-2">
+                        <Link href={`/tasks/edit/${task._id}`}>
+                          <button className="bg-blue-500 text-white px-4 py-2 rounded-md">Editar</button>
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteTask(task._id)}
+                          className="bg-red-500 text-white px-4 py-2 rounded-md"
+                        >
+                          Excluir
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
