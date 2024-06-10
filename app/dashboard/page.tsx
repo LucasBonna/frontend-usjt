@@ -31,6 +31,7 @@ interface Task {
 }
 
 interface Team {
+  _id: string;
   teamId: string;
   name: string;
 }
@@ -285,7 +286,7 @@ export default function Dashboard() {
                   {userDataWithTasks.user.teams.map((team) => (
                     <div key={team.teamId} className="bg-white rounded-md shadow-md p-4">
                       <h3 className="text-lg font-bold mb-2">{team.name}</h3>
-                      <Link href={`/teams/edit/${team.teamId}`}>
+                      <Link href={`/teams/edit/${team._id}`}>
                         <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Editar</button>
                       </Link>
                     </div>
