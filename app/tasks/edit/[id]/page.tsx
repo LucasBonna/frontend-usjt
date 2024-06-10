@@ -83,36 +83,6 @@ export default function EditTask() {
     fetchUsers();
   }, [router]);
 
-  const handleStatusChange = async (newStatus: string) => {
-    try {
-      await api.put(
-        `/api/v1/tasks/update-status/${task?._id}`, // Usar o ID da tarefa atual
-        { status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
-          },
-        }
-      );
-  
-      // Crie um novo objeto updatedTask com todas as propriedades obrigatórias
-      const updatedTask: Task = {
-        _id: task?._id || '', // Use o valor existente em task ou uma string vazia
-        title: task?.title || '', // Use o valor existente em task ou uma string vazia
-        description: task?.description || '', // Use o valor existente em task ou uma string vazia
-        dueDate: task?.dueDate || '', // Use o valor existente em task ou uma string vazia
-        assignedTo: task?.assignedTo || [], // Use o valor existente em task ou um array vazio
-        teamId: task?.teamId || '', // Use o valor existente em task ou uma string vazia
-        status: newStatus, // Use o novo status
-        __v: task?.__v || 0, // Use o valor existente em task ou 0
-      };
-  
-      setTask(updatedTask);
-    } catch (error) {
-      console.error('Erro ao atualizar o status da tarefa:', error);
-    }
-  };
-
   if (loading) {
     return <div>Carregando...</div>;
   }
@@ -187,7 +157,7 @@ export default function EditTask() {
         <select
           id="status"
           value={task.status}
-          onChange={(e) => handleStatusChange(e.target.value)}
+          onChange={(e) => setTask({ ...task, status: e.target.value })}
         >
           <option value="Not Started">Não Iniciada</option>
           <option value="In Progress">Em Progresso</option>
