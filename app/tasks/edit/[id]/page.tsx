@@ -43,9 +43,9 @@ export default function EditTask() {
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const response = await api.get(/api/v1/tasks/${taskId}, {
+        const response = await api.get(`/api/v1/tasks/${taskId}`, {
           headers: {
-            Authorization: Bearer ${Cookies.get('token')},
+            Authorization: `Bearer ${Cookies.get('token')}`,
           },
         });
         setTask(response.data.task);
@@ -68,7 +68,7 @@ export default function EditTask() {
         if (token) {
           const response = await api.get('/api/v1/users', {
             headers: {
-              Authorization: Bearer ${token},
+              Authorization: `Bearer ${token}`,
             },
           });
           setUsers(response.data.users as User[]);
@@ -106,9 +106,9 @@ export default function EditTask() {
         ...task,
         assignedTo: task.assignedTo.map(({ userId, username }) => ({ userId, username })),
       };
-      await api.put(/api/v1/tasks/edit/${taskId}, updatedTask, {
+      await api.put(`/api/v1/tasks/edit/${taskId}`, updatedTask, {
         headers: {
-          Authorization: Bearer ${Cookies.get('token')},
+          Authorization: `Bearer ${Cookies.get('token')}`,
         },
       });
       alert('Tarefa atualizada com sucesso!');

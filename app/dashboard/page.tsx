@@ -31,6 +31,7 @@ interface Task {
 }
 
 interface Team {
+  _id: string;
   teamId: string;
   name: string;
 }
@@ -80,7 +81,7 @@ const Title = styled.h1`
 `;
 
 const Button = styled.button`
-  background-color: #007bff;
+  background-color: ${(props) => (props.color === "red" ? "#dc3545" : "#007bff")};
   color: white;
   padding: 10px 20px;
   border: none;
@@ -90,7 +91,7 @@ const Button = styled.button`
   margin: 10px 0;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: ${(props) => (props.color === "red" ? "#c82333" : "#0056b3")};
   }
 `;
 
@@ -210,6 +211,9 @@ export default function Dashboard() {
               <p>ID: {userData.userId}</p>
               <p>Nome de Usuário: {userData.username}</p>
               <p>Email: {userData.email}</p>
+              <Link href="/logout">
+                <Button color="red">Logout</Button>
+              </Link>
             </div>
           )}
         </UserInfo>
@@ -285,7 +289,7 @@ export default function Dashboard() {
                   {userDataWithTasks.user.teams.map((team) => (
                     <div key={team.teamId} className="bg-white rounded-md shadow-md p-4">
                       <h3 className="text-lg font-bold mb-2">{team.name}</h3>
-                      <Link href={`/teams/edit/${team.teamId}`}>
+                      <Link href={`/teams/edit/${team._id}`}>
                         <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Editar</button>
                       </Link>
                     </div>
