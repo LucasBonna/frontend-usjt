@@ -35,7 +35,6 @@ export default function EditTask() {
 
   useEffect(() => {
     const token = Cookies.get('token');
-    console.log('Token:', token); // Adicionar log do token
     if (!token) {
       router.push('/login');
     }
@@ -84,43 +83,20 @@ export default function EditTask() {
     fetchUsers();
   }, [router]);
 
-  const handleStatusChange = async (newStatus: string) => {
-    try {
-      const response = await api.put(
-        `/api/v1/tasks/update-status/${task?._id}`, // Usar o ID da tarefa atual
-        { status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
-          },
-        }
-      );
-      console.log('Resposta da API:', response.data); // Adicionar log da resposta da API
-
-      // Crie um novo objeto updatedTask com todas as propriedades obrigatórias
-      const updatedTask: Task = {
-        _id: task?._id || '', // Use o valor existente em task ou uma string vazia
-        title: task?.title || '', // Use o valor existente em task ou uma string vazia
-        description: task?.description || '', // Use o valor existente em task ou uma string vazia
-        dueDate: task?.dueDate || '', // Use o valor existente em task ou uma string vazia
-        assignedTo: task?.assignedTo || [], // Use o valor existente em task ou um array vazio
-        teamId: task?.teamId || '', // Use o valor existente em task ou uma string vazia
-        status: newStatus, // Use o novo status
-        __v: task?.__v || 0, // Use o valor existente em task ou 0
-      };
-
-      setTask(updatedTask);
-    } catch (error) {
-      console.error('Erro ao atualizar o status da tarefa:', error);
-    }
-  };
-
   if (loading) {
-    return <div>Carregando...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
   if (!task) {
-    return <div>Tarefa não encontrada</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-2xl font-bold text-gray-800">Tarefa não encontrada</p>
+      </div>
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -157,93 +133,121 @@ export default function EditTask() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="title">Título:</label>
-        <input
-          type="text"
-          id="title"
-          value={task.title}
-          onChange={(e) => setTask({ ...task, title: e.target.value })}
-        />
-      </div>
-      <div>
-        <label htmlFor="description">Descrição:</label>
-        <textarea
-          id="description"
-          value={task.description}
-          onChange={(e) => setTask({ ...task, description: e.target.value })}
-        />
-      </div>
-      <div>
-        <label htmlFor="dueDate">Data de Vencimento:</label>
-        <input
-          type="date"
-          id="dueDate"
-          value={task.dueDate}
-          onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
-        />
-      </div>
-      <div>
-        <label htmlFor="status">Status:</label>
-        <select
-          id="status"
-          value={task.status}
-          onChange={(e) => {
-            console.log('handleStatusChange chamada'); // Adicionar log para verificar se a função é chamada
-            handleStatusChange(e.target.value);
-          }}
-        >
-          <option value="Not Started">Não Iniciada</option>
-          <option value="In Progress">Em Progresso</option>
-          <option value="Completed">Concluída</option>
-        </select>
-      </div>
-      <div>
-        <label>Membros Atribuídos:</label>
-        {task.assignedTo.map((member) => (
-          <div key={member.userId}>
+    <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Editar Tarefa</h1>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+            Título
+          </label>
+          <input
+            type="text"
+            id="title"
+            value={task.title}
+            onChange={(e) => setTask({ ...task, title: e.target.value })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            Descrição
+          </label>
+          <textarea
+            id="description"
+            value={task.description}
+            onChange={(e) => setTask({ ...task, description: e.target.value })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            rows={4}
+          />
+        </div>
+        <div>
+          <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">
+            Data de Vencimento
+          </label>
+          <input
+            type="date"
+            id="dueDate"
+            value={task.dueDate}
+            onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+            Status
+          </label>
+          <select
+            id="status"
+            value={task.status}
+            onChange={(e) => setTask({ ...task, status: e.target.value })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          >
+            <option value="Not Started">Não Iniciada</option>
+            <option value="In Progress">Em Progresso</option>
+            <option value="Completed">Concluída</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Membros Atribuídos</label>
+          <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {task.assignedTo.map((member) => (
+              <div key={member.userId} className="flex items-center">
+                <select
+                  value={member.username}
+                  onChange={(e) =>
+                    setTask({
+                      ...task,
+                      assignedTo: task.assignedTo.map((m) =>
+                        m.userId === member.userId ? { ...m, username: e.target.value } : m
+                      ),
+                    })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value={member.username}>{member.username}</option>
+                  {users
+                    .filter((user) => user.username !== member.username)
+                    .map((user) => (
+                      <option key={user._id} value={user.username}>
+                        {user.username}
+                      </option>
+                    ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveUser(member.userId)}
+                  className="ml-2 inline-flex items-center rounded-md border border-transparent bg-red-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Remover
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4">
             <select
-              value={member.username}
               onChange={(e) =>
-                setTask({
-                  ...task,
-                  assignedTo: task.assignedTo.map((m) =>
-                    m.userId === member.userId ? { ...m, username: e.target.value } : m
-                  ),
-                })
+                handleAddUser(users.find((user) => user.username === e.target.value) || { _id: '', username: '' })
               }
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             >
-              <option value={member.username}>{member.username}</option>
+              <option value="">Adicionar Membro</option>
               {users
-                .filter((user) => user.username !== member.username)
+                .filter((user) => !task.assignedTo.some((member) => member.userId === user._id))
                 .map((user) => (
                   <option key={user._id} value={user.username}>
                     {user.username}
                   </option>
                 ))}
             </select>
-            <button type="button" onClick={() => handleRemoveUser(member.userId)}>
-              Remover
-            </button>
           </div>
-        ))}
-        <div>
-          <select
-            onChange={(e) => handleAddUser(users.find((user) => user.username === e.target.value) || { _id: '', username: '' })}
-          >
-            <option value="">Adicionar Membro</option>
-            {users
-              .filter((user) => !task.assignedTo.some((member) => member.userId === user._id))
-              .map((user) => (
-                <option key={user._id} value={user.username}>
-                  {user.username}
-                </option>
-              ))}
-          </select>
         </div>
-      </div>
-      <button type="submit">Salvar</button>
-    </form>
+        <button
+          type="submit"
+          className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Salvar
+        </button>
+      </form>
+    </div>
   );
 }
